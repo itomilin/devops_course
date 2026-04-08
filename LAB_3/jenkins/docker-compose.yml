@@ -7,7 +7,7 @@ services:
       USER_UID: 1000
       USER_GID: 1000
 
-      FORGEJO__security__INSTALL_LOCK: true
+      FORGEJO__security__INSTALL_LOCK: "true"
 
       FORGEJO____APP_NAME: Forgejo
       FORGEJO____APP_SLOGAN: Beyond coding. We Forge.
@@ -15,11 +15,11 @@ services:
 
       FORGEJO__lfs__ROOT_PATH: /data/git/lfs
       FORGEJO__repository__ROOT: /data/git/repositories
-      FORGEJO__repository__DEFAULT_ENABLE_TIMETRACKING: false
+      FORGEJO__repository__DEFAULT_ENABLE_TIMETRACKING: "false"
 
       # server settings
-      FORGEJO__server__OFFLINE_MODE: true
-      FORGEJO__server__DISABLE_GRAVATAR: true
+      FORGEJO__server__OFFLINE_MODE: "true"
+      FORGEJO__server__DISABLE_GRAVATAR: "true"
       FORGEJO__server__DOMAIN: ${FORGEJO_IP_ADDR}
       FORGEJO__server__SSH_DOMAIN: ${FORGEJO_IP_ADDR}
       FORGEJO__server__ROOT_URL: http://${FORGEJO_IP_ADDR}:81
@@ -31,17 +31,17 @@ services:
       FORGEJO__database__PATH: /data/gitea/gitea.db
 
       # misc features
-      FORGEJO__service__DISABLE_REGISTRATION: true
-      FORGEJO__service__SHOW_REGISTRATION_BUTTON: false
-      FORGEJO__service__ENABLE_OPENID_SIGNIN: false
-      FORGEJO__service__ENABLE_OPENID_SELF_REGISTRATION: false
-      FORGEJO__service__DISABLE_REGULAR_ORG_CREATION: true
+      FORGEJO__service__DISABLE_REGISTRATION: "true"
+      FORGEJO__service__SHOW_REGISTRATION_BUTTON: "false"
+      FORGEJO__service__ENABLE_OPENID_SIGNIN: "false"
+      FORGEJO__service__ENABLE_OPENID_SELF_REGISTRATION: "false"
+      FORGEJO__service__DISABLE_REGULAR_ORG_CREATION: "true"
       FORGEJO__service__MIN_PASSWORD_LENGTH: 1
       FORGEJO__service__PASSWORD_COMPLEXITY: off
-      FORGEJO__cron__update_checker__ENABLED: false
+      FORGEJO__cron__update_checker__ENABLED: "false"
 
       # webhook
-      FORGEJO__webhook__SKIP_TLS_VERIFY: true
+      FORGEJO__webhook__SKIP_TLS_VERIFY: "true"
       FORGEJO__webhook__ALLOWED_HOST_LIST: "*"
 
       # logs
@@ -141,7 +141,7 @@ services:
       REGISTRY_AUTH: htpasswd
       REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
-      REGISTRY_STORAGE_DELETE_ENABLED: true
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
       OTEL_TRACES_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: none
