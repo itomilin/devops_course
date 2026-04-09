@@ -1,4 +1,4 @@
-import os
+import subprocess
 import json
 from flask import Flask, request, jsonify
 
@@ -16,7 +16,17 @@ def send_desktop_notification(status, alert_name, summary, description):
         f"<span size='large'>{description}</span>"
     )
 
-    os.system(f'notify-send -i {icon} -u {urgency} "{title}" "{msg}"')
+    subprocess.check_call([
+        "notify-send",
+        "-t",
+        "5000",  # timeout 5s
+        "-i",
+        f"{icon}",
+        "-u",
+        f"{urgency}",
+        f"{title}",
+        f"{msg}"
+    ])
 
 @app.route('/alerts', methods=['POST'])
 def grafana_webhook():
