@@ -17,6 +17,7 @@
 $ cd LAB_5/helm/application
 $ git init
 $ git add --all
+$ git commit -m "init"
 $ git remote add origin http://192.168.99.100:81/adminforg/custom-lib.git
 $ git branch -m main
 $ git push origin main
@@ -64,7 +65,7 @@ $ git push origin develop
 $ cd ~/work/LAB_6/
 ```
 
-## Скопировать ssh private key (имя priv_key не менять)
+## Скопировать ssh private key (имя файла priv_key не менять)
 ```
 $ cp ~/.ssh/id_ed25519 ./argocd/files/ssh/priv_key
 ```
