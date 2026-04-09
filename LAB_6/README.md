@@ -1,4 +1,3 @@
-# TODO
 # ЛАБОРАТОРНАЯ №6. Continuous Deployment (CD). GitOps. ArgoCD. Kustomize charts
 
 ## Docs
@@ -9,29 +8,65 @@
 
 Развернуть ArgoCD. Создать в нем несколько `application` и запустить в нем свои сервис/сервисы.
 
-# 1)
-## Создать и загрузить source helm chart в SCM
-Из 5 работы взять `helm chart application`, создать под него отдельный проект и загрузить его в систему контроля версий.
+# 1) helm source chart + gitops repo
+## helm source chart
+Из 5 работы взять chart `LAB_5/helm/application`.<br>
+Создать под него отдельный репозиторий (например `custom-lib`) в системе контроля версий (forgejo, gitlab) и загрузить.
+
 ```
-Например по такому пути http://192.168.99.100/root/custom-lib
+$ cd LAB_5/helm/application
+$ git init
+$ git add --all
+$ git remote add origin http://192.168.99.100:81/adminforg/custom-lib.git
+$ git branch -m main
+$ git push origin main
 ```
 
-## Создать и загрузить gitops репозиторий в SCM
-Взять за основу values chart из директории `./gitops`.<br>
-Перейти в директорию `./gitops` и добавить submodule на `source helm chart`<br>
-Затем загрузить в SCM.
-```
-$ git submodule add http://192.168.99.100/root/custom-lib.git chart
-```
-Основная ветка `main`. Дополнительно создать рабочую ветку с названием, например `feature/WBR-001`, чтобы ничего не менять т.к. ветка с этим именем прописана в манифестах.
+## gitops repo
+Создать в системе контроля версий репозиторий с названием `gitops`.<br>
+Перейти в директорию `LAB_6/gitops` и выполнить следующее:<br>
 
-# 2)
-Подключиться по ssh к ВМ master-0.<br>
-Перейти в директорию с заданием и выполнить следующие этапы:
+Инициализация git:
+```
+$ git init
+```
+
+Добавить submodule на `source helm chart`, который создали на предыдущем шаге:<br>
+```
+$ git submodule add http://192.168.99.100:81/adminforg/custom-lib.git chart
+```
+
+Ну и стандартные действия чтобы запушить репозиторий:
+```
+$ git remote add origin http://192.168.99.100:81/adminforg/gitops.git
+$ git add --all
+$ git commit -m "init"
+$ git branch -m main
+$ git push origin main
+```
+
+Создадим рабочую ветку `develop` и запушим ее:
+```
+$ git switch -C develop
+$ git push origin develop
+```
+
+В итоге в нашей системе контроля версий должно два репозитория:
+* helm source chart
+* gitops repo (с ветками main, develop)
+
+# 2) deploy ArgoCD
+
+Подключиться по ssh к ВМ master-0 и выполнить следующие этапы:
 
 ## Перейти в рабочую директорию
 ```
-cd ~/work/LAB_6/
+$ cd ~/work/LAB_6/
+```
+
+## Скопировать ssh private key (имя priv_key не менять)
+```
+$ cp ~/.ssh/id_ed25519 ./argocd/files/ssh/priv_key
 ```
 
 ## Установить необходимые пакеты
@@ -47,11 +82,6 @@ $ k create ns argocd
 ## Запустить сценарий для подстановки ssh_known_hosts
 ```
 $ ./scripts/ssh_known_hosts_subts.sh
-```
-
-## Запустить сценарий для подстановки приватного ключа
-```
-./scripts/private_key_subst.sh
 ```
 
 ## Установить argocd
@@ -75,13 +105,13 @@ $ k get events -n argocd --sort-by='.lastTimestamp' --watch
 $ ./scripts/obtain_argo_token.sh
 ```
 
-## Проверить установку ArgoCD
+## Зайти в UI ArgoCD
 
-Добавить в /etc/hosts строку
-
+Добавить строку на `host` машину в /etc/hosts:
+```
 192.168.99.200 argocd.test.local
-
-Перейти по адресу: http://argocd.test.local
+```
+Открыть ArgoCD UI: [argocd](http://argocd.test.local)
 
 Username: `admin`<br>
 Password: `из команды выше`
@@ -92,8 +122,7 @@ http://argocd.test.local/settings/repos
 
 ![argocd_repo_connection](./docs/argocd_repo_connection.png "argocd_repo_connection")
 
-# 3)
-## Создать Application
+# 3) Создать Application
 ![argocd_create_application](./docs/argocd_create_application.png "argocd_create_application")
 Нажать `new app` ->
 Вставить yaml манифест из `./gitops/.application/dev-application.yaml` -><br>
@@ -115,9 +144,9 @@ ArgoCD отслеживает состояние синхронизирован�
 ![argocd_out_of_sync_state](./docs/argocd_out_of_sync_state.png "argocd_out_of_sync_state")
 ![argocd_diff](./docs/argocd_diff.png "argocd_diff")
 
-Обычно все стенды кроме `prod` отслеживают состояние какой-нибудь `develop branch` (например`feature/WBR-001`).<br>
-Все изменения фиксируется в ней напрямую или через вспомогательные ветки `feature/*`, которые ответвляются от `feature/WBR-001`.<br>
-Когда приходит время делать очередной релиз, то из `feature/WBR-001` через `PR` в `release branch` (например `main`), сливаются все изменения и синхронизируем `prod`.<br>
+Обычно все стенды кроме `prod` отслеживают состояние какой-нибудь любой ветки кроме `main/master` (например `develop`).<br>
+Все изменения фиксируется в ней напрямую или через вспомогательные ветки `feature/*`, которые ответвляются от `develop`.<br>
+Когда приходит время делать очередной релиз, то из `develop` через `PR` в `release branch` (например `main`), сливаются все изменения и затем синхронизируется `prod` стенд.<br>
 Тем самым мы никак не влияем на релизную ветку на всех других этапах жизни ПО.<br>
 
 ![argocd_applications](./docs/argocd_applications.png "argocd_applications")
@@ -128,13 +157,14 @@ ArgoCD отслеживает состояние синхронизирован�
 ## Команды для полного удаления ArgoCD (если понадобится)
 Само argocd устроено так, что хранит все постоянные данные в `etcd` кластера.<br>
 Даже если не удалять созданные `application`, но удалить ArgoCD, они продолжат работу.<br>
-После повторного развертывания и создания `application` ArgoCD увидит все эти сервисы и покажет их статус синхронизации с gitops repo.
+После повторного развертывания и создания `application` ArgoCD увидит все запущенные ранее манифесты и покажет их статус синхронизации с gitops repository.
 ```
 $ k delete -n argocd -k ./argocd/
 $ k delete ns argocd
 ```
 
 ## При показе выполненного задания
-   * Продемонстрировать настроенные репозитории в SCM
-   * Продемонстрировать развернутый ArgoCD с запущенными сервисами
+* Продемонстрировать работоспособность ArgoCD с запущенными сервисами
+* Изменить состояние репозитория и проверить что изменения видны в `diff`
+* Синхронизировать состояние кластера с репозиторием
 

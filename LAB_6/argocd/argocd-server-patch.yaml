@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: argocd-server
-  namespace: argocd
+  # namespace: argocd
 spec:
   type: NodePort
   ports:
@@ -16,3 +16,4 @@ spec:
       port: 443
       protocol: TCP
       targetPort: 8080
+

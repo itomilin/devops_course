@@ -6,7 +6,10 @@ metadata:
   labels:
     argocd.argoproj.io/secret-type: known-hosts
 data:
-  ssh_known_hosts: ""
+  ssh_known_hosts: |
+    [192.168.99.100]:2222 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDdxZ11P1iK63g2MxbDL36tk0bqW5R+SjcnBNLq21FxmlIYiTQ4wl2LdX+GknJfOSKov0gtUqcs1izNLqjbLxDM3roLBU6zEOAwR8H0klz53GIzQ+yZPxLoI8W6ESECVrO+0PnXWq3NWlMoucJjW5zhZ4mDm1kSM//2q+UHBXkFKTe/FKvs8tNxFIS/CTs3rXd0R1dbZuTE0xz3kcuhxRYim++RlI4IYdd5Oa4RSdykgZ7Hk98uStrR+W2NwevJ84XnnynqYjSb8cpzy9LGVEBlcAHP86TJ6ZGmZHyyAvaKd49KKrariktyeHxCIvv13BQyEvMAxImtoVkVXfnHbNGTyMSloZJtnwlzfj3TfR7WhSMQ69X4pDXFAIWgeU2ki71t4wIQ92kb98MwtyI5LtcOjZifkR5qcpLsJaC+Gvhs6BJym12gc7XZzoCGDbqQ1gHrhyWeKoII/25aWIrPVvoOY6AFGw78Vz4gY7INhESb/KtrsA4dFvHAM0Ka+Unee40=
+    [192.168.99.100]:2222 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBAwZJk8F+GNpyK1xyodS8FvJVi8jiTlIxeZDcA+Yv7/2SW1hJ89rEBOYdgoMKxpzs929FWm2La98SWD1hxjSIXY=
+    [192.168.99.100]:2222 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJOlRrfSFzPjvnRVJm043kqBTBtKY06J4EfSbhzVLOe/
 # after kustomize appear here
 # k exec -it -n argocd pods/argocd-server-<hash> -- /bin/bash
 # cat /app/config/ssh/ssh_known_hosts

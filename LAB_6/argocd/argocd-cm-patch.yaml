@@ -7,6 +7,10 @@ data:
   kustomize.buildOptions: |
     --enable-helm --load-restrictor LoadRestrictionsNone
 
+  exec.enabled: "true"
+
+  repository.check.types: "git"
+
   resource.customizations.health.secrets.hashicorp.com_VaultStaticSecret: |
     -- resource.customizations.health.<API-Group>_<Kind>
     -- prefix                         apiVersion before / _ From Resource Kind

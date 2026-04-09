@@ -4,7 +4,7 @@ app:
   image:
     repository: 192.168.99.100:5050/root/hash-generator
     tag: 1.2.0
-    digest: 299008ae70cef8a381991f89989ca6830a16853eb27077a04485929b9cd829eb
+    # digest: 299008ae70cef8a381991f89989ca6830a16853eb27077a04485929b9cd829eb
   replicas: 1
   port: 3000
   envs:

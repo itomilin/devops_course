@@ -8,9 +8,8 @@ spec:
     server: https://kubernetes.default.svc
   source:
     path: ./values/stands/prod
-    repoURL: ssh://git@192.168.99.100:2222/root/gitops.git
+    repoURL: ssh://git@192.168.99.100:2222/adminforg/gitops.git
     targetRevision: main
-  sources: []
   project: default
   syncPolicy:
     automated: null

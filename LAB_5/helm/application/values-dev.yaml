@@ -7,7 +7,7 @@ app:
   image:
     repository: 192.168.99.100:5050/root/echo-server
     tag: 2.3.1
-    digest: 898133473002c20d49ccaf23098cbbdc92a6dd4f6ef0c6506318d9fb7fcba846
+    # digest: 898133473002c20d49ccaf23098cbbdc92a6dd4f6ef0c6506318d9fb7fcba846
   port: 3000
   replicas: 3
   update:

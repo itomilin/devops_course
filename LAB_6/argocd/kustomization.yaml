@@ -1,18 +1,52 @@
+# add new resources
 resources:
-  - https://raw.githubusercontent.com/argoproj/argo-cd/v3.3.3/manifests/install.yaml
-  - ./argocd-server-ingress.yaml  # add your own manifest
-  - ./argocd-custom-secret.yaml
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v3.3.6/manifests/install.yaml
+  - ./argocd-server-ingress.yaml
+  # - ./argocd-custom-secret.yaml
 
+# patch existing resources
 patches:
-  - path: ./argocd-cm-params-patch.yaml  # patch a existing manifest
+  - path: ./argocd-cm-params-patch.yaml
   - path: ./argocd-cm-patch.yaml
-  - path: ./argocd-cm-ssh-patch.yaml
-
-  # - path: argocd-rbac-cm-patch.yaml
-  # - path: ./argocd-server-patch.yaml
+  - path: ./argocd-cm-ssh-patch.yaml  # ssh_known_hosts
+  - path: ./argocd-server-clusterrole-patch.yaml
+  - path: ./argocd-rbac-cm-patch.yaml  # skip. single role admin
+  # - path: ./argocd-server-patch.yaml  # skip. cuz use ingress
 
 images:
   - name: public.ecr.aws/docker/library/redis:8.2.3-alpine  # what need to change
     newName: docker.io/library/redis                        # new full image name
     newTag: 8.2.3-alpine3.22                                # new tag
+
+secretGenerator:
+  - name: gitops-repo-ssh
+    namespace: argocd
+    type: Opaque
+    options:
+      labels:
+        argocd.argoproj.io/secret-type: repository
+    literals:
+      - type=git
+      - url=ssh://git@192.168.99.100:2222/adminforg/gitops.git
+      - project=default
+    files:
+      - sshPrivateKey=./files/ssh/priv_key
+
+  # - name: gitops-repo-http
+  #   namespace: argocd
+  #   type: Opaque
+  #   options:
+  #     labels:
+  #       argocd.argoproj.io/secret-type: repository
+  #   literals:
+  #     - type=git
+  #     - url=http://192.168.99.100:81/adminforg/gitops.git
+  #     - name=gitops-repo-http
+  #     - project=default
+  #     - username=<user>
+  #     - password=<pass>
+  #     - insecure=true
+
+generatorOptions:
+  disableNameSuffixHash: true
 

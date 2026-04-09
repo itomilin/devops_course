@@ -10,6 +10,11 @@ metadata:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
+
+    # websocket support (terminal)
+    nginx.ingress.kubernetes.io/websocket-services: "argocd-server"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
 spec:
   ingressClassName: nginx
   rules:
@@ -24,3 +29,4 @@ spec:
             port:
               # name: https
               name: http
+

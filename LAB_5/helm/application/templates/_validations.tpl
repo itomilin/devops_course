@@ -44,7 +44,8 @@
 
 {{- define "app.validateAll" -}}
   {{- include "app.validateNamespace" . -}}
-  {{- include "app.validateDigest" . -}}
+  {{/* {{- include "app.validateDigest" . -}} */}}
   {{- include "app.validateIngress" . -}}
   {{- include "vault.validate" . -}}
 {{- end -}}
+

@@ -18,14 +18,11 @@ def send_desktop_notification(status, alert_name, summary, description):
 
     subprocess.check_call([
         "notify-send",
-        "-t",
-        "5000",  # timeout 5s
-        "-i",
-        f"{icon}",
-        "-u",
-        f"{urgency}",
-        f"{title}",
-        f"{msg}"
+        "-t", "5000",  # timeout 5s
+        "-i", icon,
+        "-u", urgency,
+        title,
+        msg
     ])
 
 @app.route('/alerts', methods=['POST'])

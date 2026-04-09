@@ -11,9 +11,8 @@ spec:
   source:
     # path: ./values/apps/echo-server/dev  # single kustomize
     path: ./values/stands/dev
-    repoURL: ssh://git@192.168.99.100:2222/root/gitops.git
-    targetRevision: feature/WBR-001
-  sources: []
+    repoURL: ssh://git@192.168.99.100:2222/adminforg/gitops.git
+    targetRevision: develop
   project: default
   syncPolicy:
     automated: null

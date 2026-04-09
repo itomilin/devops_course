@@ -45,7 +45,7 @@ spec:
       {{- end}}
       containers:
         - name: {{ include "app.fullname" . }}
-          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}@sha256:{{ .Values.app.image.digest }}"
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}{{ if .Values.app.image.digest }}@sha256:{{ .Values.app.image.digest }}{{ end }}"
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
