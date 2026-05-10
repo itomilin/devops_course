@@ -13,14 +13,14 @@
 Из 5 работы взять chart `LAB_5/helm/application`.<br>
 Создать под него отдельный репозиторий (например `custom-lib`) в системе контроля версий (forgejo, gitlab) и загрузить.
 
-```
-$ cd LAB_5/helm/application
-$ git init
-$ git add --all
-$ git commit -m "init"
-$ git remote add origin http://192.168.99.100:81/adminforg/custom-lib.git
-$ git branch -m main
-$ git push origin main
+```console
+cd LAB_5/helm/application
+git init
+git add --all
+git commit -m "init"
+git remote add origin http://192.168.99.100:81/adminforg/custom-lib.git
+git branch -m main
+git push origin main
 ```
 
 ## gitops repo
@@ -28,28 +28,28 @@ $ git push origin main
 Перейти в директорию `LAB_6/gitops` и выполнить следующее:<br>
 
 Инициализация git:
-```
-$ git init
+```console
+git init
 ```
 
 Добавить submodule на `source helm chart`, который создали на предыдущем шаге:<br>
-```
-$ git submodule add http://192.168.99.100:81/adminforg/custom-lib.git chart
+```console
+git submodule add http://192.168.99.100:81/adminforg/custom-lib.git chart
 ```
 
 Ну и стандартные действия чтобы запушить репозиторий:
-```
-$ git remote add origin http://192.168.99.100:81/adminforg/gitops.git
-$ git add --all
-$ git commit -m "init"
-$ git branch -m main
-$ git push origin main
+```console
+git remote add origin http://192.168.99.100:81/adminforg/gitops.git
+git add --all
+git commit -m "init"
+git branch -m main
+git push origin main
 ```
 
 Создадим рабочую ветку `develop` и запушим ее:
-```
-$ git switch -C develop
-$ git push origin develop
+```console
+git switch -C develop
+git push origin develop
 ```
 
 В итоге в нашей системе контроля версий должно два репозитория:
@@ -61,55 +61,57 @@ $ git push origin develop
 Подключиться по ssh к ВМ master-0 и выполнить следующие этапы:
 
 ## Перейти в рабочую директорию
-```
-$ cd ~/work/LAB_6/
+```console
+cd ~/work/LAB_6/
 ```
 
 ## Скопировать ssh private key (имя файла priv_key не менять)
-```
-$ cp ~/.ssh/id_ed25519 ./argocd/files/ssh/priv_key
+$
+```console
+cp ~/.ssh/id_ed25519 ./argocd/files/ssh/priv_key
 ```
 
 ## Установить необходимые пакеты
-```
-$ ./scripts/install_pkgs.sh
+```consolse
+./scripts/install_pkgs.sh
 ```
 
 ## Создать ns для argocd
-```
-$ k create ns argocd
+```console
+k create ns argocd
 ```
 
 ## Запустить сценарий для подстановки ssh_known_hosts
-```
-$ ./scripts/ssh_known_hosts_subts.sh
+```console
+./scripts/ssh_known_hosts_subts.sh
 ```
 
 ## Установить argocd
-```
-$ k apply -n argocd --server-side --force-conflicts -k ./argocd/
+```console
+k apply -n argocd --server-side --force-conflicts -k ./argocd/
 ```
 
 ## Проверить статус
-```
-$ k get -n argocd all
+```console
+k get -n argocd all
 ```
 ![argocd_success_install](./docs/argocd_success_install.png "argocd_success_install")
 
 ## Проверить события (если не запускаются pods)
-```
-$ k get events -n argocd --sort-by='.lastTimestamp' --watch
+```console
+k get events -n argocd --sort-by='.lastTimestamp' --watch
 ```
 
 ## Получить пароль из секрета
-```
-$ ./scripts/obtain_argo_token.sh
+```console
+./scripts/obtain_argo_token.sh
 ```
 
 ## Зайти в UI ArgoCD
 
-Добавить строку на `host` машину в /etc/hosts:
-```
+> [!IMPORTANT]
+> Добавить запись в /etc/hosts !! не на ВМ !!
+```console
 192.168.99.200 argocd.test.local
 ```
 Открыть ArgoCD UI: [argocd](http://argocd.test.local)
@@ -159,9 +161,11 @@ ArgoCD отслеживает состояние синхронизирован�
 Само argocd устроено так, что хранит все постоянные данные в `etcd` кластера.<br>
 Даже если не удалять созданные `application`, но удалить ArgoCD, они продолжат работу.<br>
 После повторного развертывания и создания `application` ArgoCD увидит все запущенные ранее манифесты и покажет их статус синхронизации с gitops repository.
+```console
+k delete -n argocd -k ./argocd/
 ```
-$ k delete -n argocd -k ./argocd/
-$ k delete ns argocd
+```console
+k delete ns argocd
 ```
 
 ## При показе выполненного задания

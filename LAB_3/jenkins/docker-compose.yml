@@ -84,10 +84,10 @@ services:
     user: root
     environment:
       TZ: Europe/Moscow
-      # uncomment this env block if u want to use proxy
-      PROXY_OPTS: >-
-        -Dhttps.proxyHost=192.168.1.10
-        -Dhttps.proxyPort=10808
+      # uncomment this env block and paste if u want to use proxy
+      # PROXY_OPTS: >-
+      #   -Dhttps.proxyHost=192.168.1.10
+      #   -Dhttps.proxyPort=10808
       JAVA_OPTS: >-
         -Djenkins.install.runSetupWizard=false
         -Dhudson.model.UpdateCenter.never=true
