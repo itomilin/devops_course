@@ -84,7 +84,7 @@ services:
     user: root
     environment:
       TZ: Europe/Moscow
-      USE_PROXY: "false"
+      # uncomment this env block if u want to use proxy
       PROXY_OPTS: >-
         -Dhttps.proxyHost=192.168.1.10
         -Dhttps.proxyPort=10808

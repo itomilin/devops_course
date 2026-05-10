@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 CMD_TIMEOUT="5m"
-if [[ "$USE_PROXY" == "true" ]]; then
+if [[ -n "$PROXY_OPTS" ]]; then
   printf "\033[92m>>> Installing plugins with PROXY: $PROXY_OPTS\033[0m\n"
 else
   printf "\033[92m>>> Installing plugins without PROXY\033[0m\n"
