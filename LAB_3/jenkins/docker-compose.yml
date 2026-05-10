@@ -84,7 +84,14 @@ services:
     user: root
     environment:
       TZ: Europe/Moscow
-      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false -Dhudson.model.UpdateCenter.never=true -Djenkins.telemetry.enabled=false"
+      USE_PROXY: "false"
+      PROXY_OPTS: >-
+        -Dhttps.proxyHost=192.168.1.10
+        -Dhttps.proxyPort=10808
+      JAVA_OPTS: >-
+        -Djenkins.install.runSetupWizard=false
+        -Dhudson.model.UpdateCenter.never=true
+        -Djenkins.telemetry.enabled=false
       JENKINS_ADMIN_ID: ${JENKINS_ADMIN_ID}
       JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD}
 
@@ -96,20 +103,21 @@ services:
       FORGEJO_SERVER_URL: ${FORGEJO_SERVER_URL}
 
       CASC_JENKINS_CONFIG: /var/jenkins_home/jenkins_cfg.yaml
-    entrypoint: ["/bin/sh", "-c"]
+    entrypoint: [ "/bin/bash", "-ec" ]
     command:
       - |
         # install plugins first
         /usr/local/bin/bootstrap_plugins.sh
 
         # after run jenkins
-        echo "Starting Jenkins..."
+        echo ">>> Starting Jenkins..."
         /usr/local/bin/jenkins.sh
     volumes:
       - ${PWD}/jenkins_data/:/var/jenkins_home
+      - ${PWD}/jenkins_cache/jenkins-plugin-management-cli:/root/.cache/jenkins-plugin-management-cli
       - ${PWD}/cfg/jenkins_cfg.yaml:/var/jenkins_home/jenkins_cfg.yaml:ro
-      # /usr/share/jenkins/ref/plugins
       - ${PWD}/scripts/jenkins/bootstrap_plugins.sh:/usr/local/bin/bootstrap_plugins.sh:ro
+      - ${PWD}/scripts/jenkins/check_installed_plugins.sh:/usr/local/bin/check_installed_plugins.sh:ro
       - ${PWD}/cfg/plugins.txt:/usr/share/jenkins/ref/plugins.txt:ro
       - /usr/bin/docker:/usr/bin/docker
       - /var/run/docker.sock:/var/run/docker.sock

@@ -3,9 +3,9 @@ data
 runner_cfg
 **/.git
 **/build
-jenkins/*_data
 
 registry_data
 forgejo_data
 jenkins_data
+jenkins_cache
 

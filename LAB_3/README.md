@@ -16,13 +16,18 @@ Error response from daemon: Get "http://192.168.99.100:5050/v2/": Get "http://gi
 
 тогда добавить строку `registry['token_realm'] = "192.168.99.100:80"` в конец файла ./cfg/gitlab.rb
 
-Затем сделать полную остановку и старт контейнера с гитлабом и применить конфигурацию:
+Затем сделать полную остановку и старт контейнера с гитлабом и применить конфигурацию.<br>
+Остановить:
+```console
+docker compose down gitlab
 ```
-$ docker compose down gitlab
-$ docker compose up -d gitlab
-
-# дождаться запуска gitlab и выполнить reconfigure
-$ docker exec gitlab gitlab-ctl reconfigure
+Запустить:
+```console
+docker compose up -d gitlab
+```
+Дождаться запуска gitlab и выполнить reconfigure:
+```console
+docker exec gitlab gitlab-ctl reconfigure
 ```
 
 ##
@@ -34,11 +39,11 @@ $ docker exec gitlab gitlab-ctl reconfigure
 Подключиться к ВМ master-0.
 
 Добавить файл `daemon.json` в `/etc/docker/` и перезапустить докер.
-```
-$ su -
-# cp /home/$(id -un 1000)/work/devops_course/LAB_3/daemon.json /etc/docker/daemon.json
-# systemctl restart docker.service
-# exit
+```console
+su -
+cp /home/$(id -un 1000)/work/devops_course/LAB_3/daemon.json /etc/docker/daemon.json
+systemctl restart docker.service
+exit
 ```
 
 
@@ -47,27 +52,25 @@ $ su -
 ## 1) Развернуть Gitlab
 
 Перейти в директорию gitlab:
-```
-$ cd ~/work/devops_course/LAB_3/gitlab
+```console
+cd ~/work/devops_course/LAB_3/gitlab
 ```
 
 Сгенерировать `.env` содержащий все необходимые переменные:
-```
-$ ./scripts/prepare_env.sh
+```console
+./scripts/prepare_env.sh
 ```
 
 Развернуть Gitlab:
-```
-$ docker compose up -d gitlab
+```console
+docker compose up -d gitlab
 ```
 
 Инициализация займет некоторое время, все последующие запуски будут быстрее.
 
 После инициализации открыть с хоста адрес http://192.168.99.100:80/ и проверить работу Gitlab, данные для входа:
-```
-login: root
+> login: root<br>
 password: GITLAB_ROOT_PASSWORD field from .env
-```
 
 * (Опционально) Перейти http://192.168.99.100/admin/users и создать пользователя
 * (Опционально) Перейти http://192.168.99.100/-/user_settings/ssh_keys и добавить публичный ssh ключ (удобнее чем http метод).
@@ -77,28 +80,27 @@ password: GITLAB_ROOT_PASSWORD field from .env
 Использовать встроенное registry в gitlab мы не будем, поэтому развернем свое минималистичное.
 
 По умолчанию в репозитории лежит зашифрованный файл `.registry_auth` для `docker-registry`, creds:
-```
-user: admin
+> user: admin<br>
 password: pass
-```
+
 Файл сгенерирован следующим образом:
-```
+```console
 htpasswd -Bbn <user> <pass> > .auth
 ```
 Утилита требует установки пакета `apache2-utils` (debian based distro).
 Логин и пароль можно оставить по умолчанию и не менять.
 
 Для развертывания выполнить команду:
-```
-$ docker compose up -d registry
+```console
+docker compose up -d registry
 ```
 
 Это минимальный registry, у него нету интегрированного UI, смотреть содержимое можно через API.<br>
 Для нас достаточно смотреть список загруженных образов и их тегов, изначально он будет пустым.<br>После запуска, можно сделать проверку все ли корректно развернулось:
-```
+```console
 curl -s -u <user>:<pass> http://192.168.99.100:5050/v2/_catalog | json_pp
 ```
-Если все ок, то отдаст пустой список реп:
+Если все ок, то отдаст пустой список репозиториев:
 ```
 {
    "repositories" : []
@@ -117,17 +119,16 @@ http://192.168.99.100:5050/v2/root/hash-generator/tags/list
 http://192.168.99.100:5050/v2/root/echo-server/manifests/3.1.0
 ```
 Затем логинимся в registry, чтобы сгенерировался файл `config.json`:
-```
+```console
 docker login 192.168.99.100:5050
 ```
 Забираем creds:
-```
+```console
 cat ~/.docker/config.json
 ```
 Добавляем их в глобальную переменную для всех проектов `gitlab`, открываем:
-```
-http://192.168.99.100/admin/application_settings/ci_cd
-```
+[gitlab_application_settings](http://192.168.99.100/admin/application_settings/ci_cd)
+
 Жмем `Add variable`-> выбираем `Type` -> `file` -><br>
 В поле `Key` вводим `DOCKER_CONFIG_JSON` -><br>
 В поле `Value` вводим все содержимое из файла `~/.docker/config.json`<br>
@@ -165,21 +166,21 @@ http://192.168.99.100/admin/application_settings/ci_cd
 ## 1) Развернуть Forgejo
 
 Перейти в директорию jenkins:
-```
-$ cd ~/work/devops_course/LAB_3/jenkins
+```console
+cd ~/work/devops_course/LAB_3/jenkins
 ```
 
 Выполнить команду для развертывания SCM:
-```
-$ docker compose up -d forgejo
+```console
+docker compose up -d forgejo
 ```
 
 Если инициализация прошла успешно, SCM будет доступна по адресу:<br>
 [http://192.168.99.100:81/](http://192.168.99.100:81/)
 
 После инициализации создать пользователя:
-```
-$ docker exec -u 1000:1000 forgejo create_admin_user.sh
+```console
+docker exec -u 1000:1000 forgejo create_admin_user.sh
 ```
 
 Затем выполнить вход и добавить ssh ключ.<br>
@@ -190,8 +191,8 @@ $ docker exec -u 1000:1000 forgejo create_admin_user.sh
 Подробное описание в варианте для Gitlab.
 
 Для развертывания registry выполнить команду:
-```
-$ docker compose up -d registry
+```console
+docker compose up -d registry
 ```
 
 ## 3) Развернуть Jenkins
@@ -200,12 +201,20 @@ $ docker compose up -d registry
 Сборка будет на мастер узле в docker, без дополнительных `Jenkins agents`.<br>
 
 Для развертывания выполнить команду:
-```
-$ docker compose up -d jenkins
+```console
+docker compose up -d jenkins
 ```
 
 Все максимально автоматизировано.
 Плагины, пользователь, интеграции, все настраивается автоматически при первом запуске.
+
+> Плагины с IP адресов РФ могут не загружаться, в таком случае можно использовать ваш рабочий proxy.<br>
+Чтобы использовать proxy для загрузки плагинов указать в переменных docker-compose.yaml указать USE_PROXY: "true" и задать адрес прокси в этой переменной PROXY_OPTS.
+
+Чтобы узнать все ли ок запустилось, смотрите лог:
+```console
+docker logs -f jenkins
+```
 
 Если инициализация прошла успешно, Jenkins будет доступен по адресу:<br>
 [http://192.168.99.100:82/](http://192.168.99.100:82/)
@@ -236,13 +245,13 @@ $ docker compose up -d jenkins
 Также для удобства добавлен этап, который делает запрос к API registry, чтобы смотреть сразу в логе:
 ![jenkins_registry_api_log](./docs/jenkins_registry_api_log.png "jenkins_registry_api_log")
 
-## Перенос образов в локальное registry
+## Перенос образов в локальное registry (для ознакомления)
 
-С помощью утилиты `skopeo` можно переносить образы из `public registry` в свое `private registry`:
+С помощью утилиты `skopeo` можно переносить образы из `public registry` в свое `private registry` удобным способом.
 
 Установить пакет:
-```
-# apt install skopeo --no-install-recommends --no-install-suggests
+```console
+apt install skopeo --no-install-recommends --no-install-suggests
 ```
 
 Указываем сначала `source` откуда скачивать, затем `destination` куда загружать.<br>Есть различные опции, некоторые из них в примере ниже (могут понадобиться права суперпользователя):
